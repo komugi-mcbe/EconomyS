@@ -127,13 +127,10 @@ class EconomyLand extends PluginBase implements Listener{
 	}
 
 	public function onDisable(){
-        if (Server::getInstance()->isRunning()) {
             $this->save();
             if($this->db instanceof Database){
                 $this->db->close();
             }
-        }
-
 	}
 
 	public function save(){
