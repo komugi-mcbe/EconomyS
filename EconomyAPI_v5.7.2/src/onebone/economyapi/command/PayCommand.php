@@ -70,6 +70,11 @@ class PayCommand extends Command{
 				if($p instanceof Player){
 					$p->sendMessage($this->plugin->getMessage("money-paid", [$sender->getName(), $amount], $sender->getName()));
 				}
+				foreach($this->plugin->getServer()->getOnlinePlayers() as $op){
+					if($op->isOp()){
+						$op->sendMessage("[EconomyS] §b".$sender->getName()."が".$player."に".$amount."円支払いました");
+					}
+				}
 			}else{
 				$sender->sendMessage($this->plugin->getMessage("pay-failed", [$player, $amount], $sender->getName()));
 			}
