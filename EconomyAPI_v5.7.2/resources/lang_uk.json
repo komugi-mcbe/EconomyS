@@ -3,65 +3,69 @@
 	"commands": {
 		"mymoney": {
 			"usage": "/mymoney",
-			"description": "Показує ваш баланс"
+			"description": "Показу? ваш баланс"
 		},
 		"topmoney": {
-			"usage": "/topmoney [сторінка]",
-			"description": "Показує багачів серверу"
+			"usage": "/topmoney [стор?нка]",
+			"description": "Показу? багач?в серверу"
 		},
 		"setmoney": {
-			"usage": "/setmoney <гравець> <кількість>",
-			"description": "Встановлює баланс для гравця"
+			"usage": "/setmoney <гравець> <к?льк?сть>",
+			"description": "Встановлю? баланс для гравця"
 		},
 		"seemoney": {
 			"usage": "/seemoney <гравець>",
-			"description": "Показує баланс гравця"
+			"description": "Показу? баланс гравця"
 		},
 		"givemoney": {
-			"usage": "/givemoney <гравець> <кількість>",
-			"description": "Видає гроші гравцю"
+			"usage": "/givemoney <гравець> <к?льк?сть>",
+			"description": "Вида? грош? гравцю"
 		},
 		"takemoney": {
-			"usage": "/takemoney <гравець> <кількість>",
-			"description": "Забирає гроші у гравця"
+			"usage": "/takemoney <гравець> <к?льк?сть>",
+			"description": "Забира? грош? у гравця"
 		},
 		"pay": {
-			"usage": "/pay <гравець> <кількість>",
-			"description": "Передає гравцю гроші"
+			"usage": "/pay <гравець> <к?льк?сть>",
+			"description": "Переда? гравцю грош?"
 		},
 		"setlang": {
 			"usage": "/setlang <мова>",
-			"description": "Встановлює мову"
+			"description": "Встановлю? мову"
 		},
 		"mystatus": {
 			"usage": "/mystatus",
-			"description": "Показує статус Ваших грошей"
+			"description": "Показу? статус Ваших грошей"
+		},
+		"floor": {
+			"usage": "/floor",
+			"description": "お金を小数点以下切り捨てます"
 		}
 	},
     "language-set": "Встановлено мову %1 (перекладено SMLR)",
-    "request-cancelled": "Ваш запит було відхилено",
-    "гравець-not-connected": "Гравець %1 зараз не грає",
-    "гравець-never-connected": "Гравця %1 не існує",
-    "topmoney-tag": "- Список багачів серверу (%1 з %2) -",
+    "request-cancelled": "Ваш запит було в?дхилено",
+    "гравець-not-connected": "Гравець %1 зараз не гра?",
+    "гравець-never-connected": "Гравця %1 не ?сну?",
+    "topmoney-tag": "- Список багач?в серверу (%1 з %2) -",
     "topmoney-format": "[%1] %2: %3",
     "pay-failed": "Помилка оплати.",
     "pay-success": "Передано %MONETARY_UNIT%%1 до %2.",
     "money-paid": "%1 передав Вам %MONETARY_UNIT%%2.",
-    "takemoney-must-be-number": "Кількість має бути чисельним значенням",
-    "takemoney-invalid-number": "Неправильна кількість",
-    "takemoney-гравець-lack-of-money": "%1 не має %MONETARY_UNIT%%2. Баланс %1 : %MONETARY_UNIT%%3",
+    "takemoney-must-be-number": "К?льк?сть ма? бути чисельним значенням",
+    "takemoney-invalid-number": "Неправильна к?льк?сть",
+    "takemoney-гравець-lack-of-money": "%1 не ма? %MONETARY_UNIT%%2. Баланс %1 : %MONETARY_UNIT%%3",
     "takemoney-money-taken": "З Вас знято %MONETARY_UNIT%%1",
     "takemoney-took-money": "Ви зняли з гравця %1 %MONETARY_UNIT%%2",
     "takemoney-failed": "Помилка зняття",
-    "givemoney-must-be-number": "Кількість має бути чисельним значенням",
-    "givemoney-invalid-number": "Неправильна кількість",
+    "givemoney-must-be-number": "К?льк?сть ма? бути чисельним значенням",
+    "givemoney-invalid-number": "Неправильна к?льк?сть",
     "givemoney-money-given": "Ви отримали %MONETARY_UNIT%%1",
     "givemoney-gave-money": "Видано %MONETARY_UNIT%%1 гравцю %2",
     "seemoney-seemoney": "Баланс %1 : %MONETARY_UNIT%%2",
-    "setmoney-setmoney": "Баланс гравця %1 змінено на %MONETARY_UNIT%%2",
-    "setmoney-set": "Ваш баланс змінено на %MONETARY_UNIT%%1",
-    "setmoney-failed": "Помилка зміни балансу",
-    "setmoney-invalid-number": "%MONETARY_UNIT%%1 має бути чисельним значенням",
+    "setmoney-setmoney": "Баланс гравця %1 зм?нено на %MONETARY_UNIT%%2",
+    "setmoney-set": "Ваш баланс зм?нено на %MONETARY_UNIT%%1",
+    "setmoney-failed": "Помилка зм?ни балансу",
+    "setmoney-invalid-number": "%MONETARY_UNIT%%1 ма? бути чисельним значенням",
     "mymoney-mymoney": "Ваш баланс : %MONETARY_UNIT%%1",
     "mystatus-show": "Статус : %1%"
 }

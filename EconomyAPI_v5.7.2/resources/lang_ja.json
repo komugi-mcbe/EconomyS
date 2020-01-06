@@ -36,6 +36,10 @@
 		"mystatus": {
 			"usage": "/mystatus",
 			"description": "自分の所持金の状況を表示します"
+		},
+		"floor": {
+			"usage": "/floor",
+			"description": "お金を小数点以下切り捨てます"
 		}
 	},
     "language-set": "言語を%1に変更しました。",

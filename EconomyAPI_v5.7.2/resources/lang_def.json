@@ -36,6 +36,10 @@
 		"mystatus": {
 			"usage": "/mystatus",
 			"description": "Shows your status of money"
+		},
+		"floor": {
+			"usage": "/floor",
+			"description": "お金を小数点以下切り捨てます"
 		}
 	},
     "language-set": "Language set to %1 by onebone",

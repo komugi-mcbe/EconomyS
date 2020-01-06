@@ -183,7 +183,7 @@ class EconomyAPI extends PluginBase implements Listener{
 		if($amount < 0){
 			return self::RET_INVALID;
 		}
-
+		$amount=floor($amount);
 		if($player instanceof Player){
 			$player = $player->getName();
 		}
@@ -220,6 +220,7 @@ class EconomyAPI extends PluginBase implements Listener{
 		if($player instanceof Player){
 			$player = $player->getName();
 		}
+		$amount=floor($amount);
 		$player = strtolower($player);
 		if(($money = $this->provider->getMoney($player)) !== false){
 			$amount = round($amount, 2);
@@ -250,9 +251,11 @@ class EconomyAPI extends PluginBase implements Listener{
 		if($amount < 0){
 			return self::RET_INVALID;
 		}
+		$amount=floor($amount);
 		if($player instanceof Player){
 			$player = $player->getName();
 		}
+		
 		$player = strtolower($player);
 		if(($money = $this->provider->getMoney($player)) !== false){
 			$amount = round($amount, 2);
@@ -419,7 +422,8 @@ class EconomyAPI extends PluginBase implements Listener{
 			"takemoney" => "\\onebone\\economyapi\\command\\TakeMoneyCommand",
 			"pay" => "\\onebone\\economyapi\\command\\PayCommand",
 			"setlang" => "\\onebone\\economyapi\\command\\SetLangCommand",
-			"mystatus" => "\\onebone\\economyapi\\command\\MyStatusCommand"
+			"mystatus" => "\\onebone\\economyapi\\command\\MyStatusCommand",
+			"floor" => "\\onebone\\economyapi\\command\\FloorCommand"
 		];
 		foreach($commands as $cmd => $class){
 			$map->register("economyapi", new $class($this));

@@ -41,4 +41,7 @@ permissions:
           economyapi.command.takemoney:
             description: Allows player to take money from others
             default: op
+          economyapi.command.floor:
+            description: "所持金の小数点以下を切りさげます"
+            default: true
 ...
