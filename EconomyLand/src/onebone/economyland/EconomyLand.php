@@ -213,385 +213,384 @@ class EconomyLand extends PluginBase implements Listener{
 					return false;
 			}
 			$sub = $param[0];
-			switch($sub){
-				case "buy":
-				if(!$sender->hasPermission("economyland.command.land.buy")){
-					$sender->sendMessage($this->getMessage("no-permission-command"));
-					return true;
-				}
-				if(!$sender instanceof Player){
-					$sender->sendMessage($this->getMessage("run-cmd-in-game"));
-					return true;
-				}
+			switch($sub) {
+                case "buy":
+                    if (!$sender->hasPermission("economyland.command.land.buy")) {
+                        $sender->sendMessage($this->getMessage("no-permission-command"));
+                        return true;
+                    }
+                    if (!$sender instanceof Player) {
+                        $sender->sendMessage($this->getMessage("run-cmd-in-game"));
+                        return true;
+                    }
 
-				if(in_array($sender->getLevel()->getFolderName(), $this->getConfig()->get("buying-disallowed-worlds", []))){
-					$sender->sendMessage($this->getMessage("not-allowed-to-buy"));
-					return true;
-				}
+                    if (in_array($sender->getLevel()->getFolderName(), $this->getConfig()->get("buying-disallowed-worlds", []))) {
+                        $sender->sendMessage($this->getMessage("not-allowed-to-buy"));
+                        return true;
+                    }
 
-				$cnt = count($this->db->getLandsByOwner($sender->getName()));
+                    $cnt = count($this->db->getLandsByOwner($sender->getName()));
 
-				if(is_numeric($this->getConfig()->get("player-land-limit", "NaN"))){
-					if($cnt >= $this->getConfig()->get("player-land-limit", "NaN")){
-						$sender->sendMessage($this->getMessage("land-limit", array($cnt, $this->getConfig()->get("player-land-limit", "NaN"), "%3", "%4")));
-						return true;
-					}
-				}
-				if(!isset($this->start[$sender->getName()])){
-					$sender->sendMessage($this->getMessage("set-first-position"));
-					return true;
-				}elseif(!isset($this->end[$sender->getName()])){
-					$sender->sendMessage($this->getMessage("set-second-position"));
-					return true;
-				}
-				$l = $this->start[$sender->getName()];
-				$endp = $this->end[$sender->getName()];
-				$startX = (int) floor($l["x"]);
-				$endX = (int) floor($endp["x"]);
-				$startZ = (int) floor($l["z"]);
-				$endZ = (int) floor($endp["z"]);
-				if($startX > $endX){
-					$backup = $startX;
-					$startX = $endX;
-					$endX = $backup;
-				}
-				if($startZ > $endZ){
-					$backup = $startZ;
-					$startZ = $endZ;
-					$endZ = $backup;
-				}
+                    if (is_numeric($this->getConfig()->get("player-land-limit", "NaN"))) {
+                        if ($cnt >= $this->getConfig()->get("player-land-limit", "NaN")) {
+                            $sender->sendMessage($this->getMessage("land-limit", array($cnt, $this->getConfig()->get("player-land-limit", "NaN"), "%3", "%4")));
+                            return true;
+                        }
+                    }
+                    if (!isset($this->start[$sender->getName()])) {
+                        $sender->sendMessage($this->getMessage("set-first-position"));
+                        return true;
+                    } elseif (!isset($this->end[$sender->getName()])) {
+                        $sender->sendMessage($this->getMessage("set-second-position"));
+                        return true;
+                    }
+                    $l = $this->start[$sender->getName()];
+                    $endp = $this->end[$sender->getName()];
+                    $startX = (int)floor($l["x"]);
+                    $endX = (int)floor($endp["x"]);
+                    $startZ = (int)floor($l["z"]);
+                    $endZ = (int)floor($endp["z"]);
+                    if ($startX > $endX) {
+                        $backup = $startX;
+                        $startX = $endX;
+                        $endX = $backup;
+                    }
+                    if ($startZ > $endZ) {
+                        $backup = $startZ;
+                        $startZ = $endZ;
+                        $endZ = $backup;
+                    }
 
-				$result = $this->db->checkOverlap($startX, $endX, $startZ, $endZ, $sender->getLevel()->getFolderName());
-				if($result){
-					$sender->sendMessage($this->getMessage("land-around-here", array($result["owner"], $result["ID"], "%3")));
-					return true;
-				}
-				$price = ((($endX + 1) - ($startX - 1)) - 1) * ((($endZ + 1) - ($startZ - 1)) - 1) * $this->getConfig()->get("price-per-y-axis", 100);
-				if(EconomyAPI::getInstance()->reduceMoney($sender, $price, true, "EconomyLand") === EconomyAPI::RET_INVALID){
-					$sender->sendMessage($this->getMessage("no-money-to-buy-land"));
-					return true;
-				}
+                    $result = $this->db->checkOverlap($startX, $endX, $startZ, $endZ, $sender->getLevel()->getFolderName());
+                    if ($result) {
+                        $sender->sendMessage($this->getMessage("land-around-here", array($result["owner"], $result["ID"], "%3")));
+                        return true;
+                    }
+                    $price = ((($endX + 1) - ($startX - 1)) - 1) * ((($endZ + 1) - ($startZ - 1)) - 1) * $this->getConfig()->get("price-per-y-axis", 100);
+                    if (EconomyAPI::getInstance()->reduceMoney($sender, $price, true, "EconomyLand") === EconomyAPI::RET_INVALID) {
+                        $sender->sendMessage($this->getMessage("no-money-to-buy-land"));
+                        return true;
+                    }
 
-				$this->db->addLand($startX, $endX, $startZ, $endZ, $sender->getLevel()->getFolderName(), $price, $sender->getName());
-				unset($this->start[$sender->getName()], $this->end[$sender->getName()]);
-				$sender->sendMessage($this->getMessage("bought-land", array($price, "%2", "%3")));
-				break;
-				case "list":
-				if(!$sender->hasPermission("economyland.command.land.list")){
-					$sender->sendMessage($this->getMessage("no-permission-command"));
-					return true;
-				}
-				$page = isset($param[1]) ? (int) $param[1] : 1;
+                    $this->db->addLand($startX, $endX, $startZ, $endZ, $sender->getLevel()->getFolderName(), $price, $sender->getName());
+                    unset($this->start[$sender->getName()], $this->end[$sender->getName()]);
+                    $sender->sendMessage($this->getMessage("bought-land", array($price, "%2", "%3")));
+                    break;
+                case "list":
+                    if (!$sender->hasPermission("economyland.command.land.list")) {
+                        $sender->sendMessage($this->getMessage("no-permission-command"));
+                        return true;
+                    }
+                    $page = isset($param[1]) ? (int)$param[1] : 1;
 
-				$land = $this->db->getAll();
-				$output = "";
-				$max = ceil(count($land) / 5);
-				$pro = 1;
-				$page = (int)$page;
-				$output .= $this->getMessage("land-list-top", array($page, $max, ""));
-				$current = 1;
-				foreach($land as $l){
-					$cur = (int) ceil($current / 5);
-					if($cur > $page)
-						continue;
-					if($pro == 6)
-						break;
-					if($page === $cur){
-						$output .= $this->getMessage("land-list-format", array($l["ID"], (($l["endX"] + 1) - ($l["startX"] - 1) - 1) * (($l["endZ"] + 1) - ($l["startZ"] - 1) - 1 ), $l["owner"]));
-						$pro++;
-					}
-					$current++;
-				}
-				$sender->sendMessage($output);
-				break;
-				case "whose":
-				if(!$sender->hasPermission("economyland.command.land.whose")){
-					$sender->sendMessage($this->getMessage("no-permission-command"));
-					return true;
-				}
-				if(!isset($param[1])){
-					$sender->sendMessage("Usage: /land whose <playername>");
-					return true;
-				}
-				$player = $param[1];
+                    $land = $this->db->getAll();
+                    $output = "";
+                    $max = ceil(count($land) / 5);
+                    $pro = 1;
+                    $page = (int)$page;
+                    $output .= $this->getMessage("land-list-top", array($page, $max, ""));
+                    $current = 1;
+                    foreach ($land as $l) {
+                        $cur = (int)ceil($current / 5);
+                        if ($cur > $page)
+                            continue;
+                        if ($pro == 6)
+                            break;
+                        if ($page === $cur) {
+                            $output .= $this->getMessage("land-list-format", array($l["ID"], (($l["endX"] + 1) - ($l["startX"] - 1) - 1) * (($l["endZ"] + 1) - ($l["startZ"] - 1) - 1), $l["owner"]));
+                            $pro++;
+                        }
+                        $current++;
+                    }
+                    $sender->sendMessage($output);
+                    break;
+                case "whose":
+                    if (!$sender->hasPermission("economyland.command.land.whose")) {
+                        $sender->sendMessage($this->getMessage("no-permission-command"));
+                        return true;
+                    }
+                    if (!isset($param[1])) {
+                        $sender->sendMessage("Usage: /land whose <playername>");
+                        return true;
+                    }
+                    $player = $param[1];
 
-				if(!$sender->isOp()){
-					if($param[1]!==$sender->getName()){
-						$sender->sendMessage("[管理AI]自分の名前以外は検索できません。");
-						return true;
-					}
-				}
+                    if (!$sender->isOp()) {
+                        if ($param[1] !== $sender->getName()) {
+                            $sender->sendMessage("[管理AI]自分の名前以外は検索できません。");
+                            return true;
+                        }
+                    }
 
-				$alike = true;
-				if(str_replace(" ", "", $player) === ""){
-					$player = $sender->getName();
-					$alike = false;
-				}
-				if($alike){
-					$lands = $this->db->getLandsByKeyword($player);
-				}else{
-					$lands = $this->db->getLandsByOwner($player);
-				}
-				$sender->sendMessage("Results from query : $player\n");
-				foreach($lands as $info)
-					$sender->sendMessage($this->getMessage("land-list-format", array($info["ID"], ($info["endX"] - $info["startX"]) * ($info["endZ"] - $info["startZ"]), $info["owner"])));
-				break;
-				case "move":
-				if(!$sender instanceof Player){
-					$sender->sendMessage($this->getMessage("run-cmd-in-game"));
-					return true;
-				}
-				if(!$sender->hasPermission("economyland.command.land.move")){
-					$sender->sendMessage($this->getMessage("no-permission-command"));
-					return true;
-				}
-				$num = $param[1];
-				if(trim($num) == ""){
-					$sender->sendMessage("Usage: /land move <land num>");
-					return true;
-				}
-				if(!is_numeric($num)){
-					$sender->sendMessage("Usage: /land move <land num>");
-					return true;
-				}
+                    $alike = true;
+                    if (str_replace(" ", "", $player) === "") {
+                        $player = $sender->getName();
+                        $alike = false;
+                    }
+                    if ($alike) {
+                        $lands = $this->db->getLandsByKeyword($player);
+                    } else {
+                        $lands = $this->db->getLandsByOwner($player);
+                    }
+                    $sender->sendMessage("Results from query : $player\n");
+                    foreach ($lands as $info)
+                        $sender->sendMessage($this->getMessage("land-list-format", array($info["ID"], ($info["endX"] - $info["startX"]) * ($info["endZ"] - $info["startZ"]), $info["owner"])));
+                    break;
+                case "move":
+                    if (!$sender instanceof Player) {
+                        $sender->sendMessage($this->getMessage("run-cmd-in-game"));
+                        return true;
+                    }
+                    if (!$sender->hasPermission("economyland.command.land.move")) {
+                        $sender->sendMessage($this->getMessage("no-permission-command"));
+                        return true;
+                    }
+                    $num = $param[1];
+                    if (trim($num) == "") {
+                        $sender->sendMessage("Usage: /land move <land num>");
+                        return true;
+                    }
+                    if (!is_numeric($num)) {
+                        $sender->sendMessage("Usage: /land move <land num>");
+                        return true;
+                    }
 
-				$info = $this->db->getLandById($num);
-				if($info === false){
-					$sender->sendMessage($this->getMessage("no-land-found", array($num, "", "")));
-					return true;
-				}
+                    $info = $this->db->getLandById($num);
+                    if ($info === false) {
+                        $sender->sendMessage($this->getMessage("no-land-found", array($num, "", "")));
+                        return true;
+                    }
 
-				if($info["owner"] !== $sender->getName()){
-					if(!$sender->hasPermission("economyland.land.move.others")){
-						$sender->sendMessage($this->getMessage("no-permission-move", [$info["ID"], $info["owner"], "%3"]));
-						return true;
-					}
-				}
-				$level = $this->getServer()->getLevelByName($info["level"]);
-				if(!$level instanceof Level){
-					$sender->sendMessage($this->getMessage("land-corrupted", array($num, $info["level"], "")));
-					return true;
-				}
+                    if ($info["owner"] !== $sender->getName()) {
+                        if (!$sender->hasPermission("economyland.land.move.others")) {
+                            $sender->sendMessage($this->getMessage("no-permission-move", [$info["ID"], $info["owner"], "%3"]));
+                            return true;
+                        }
+                    }
+                    $level = $this->getServer()->getLevelByName($info["level"]);
+                    if (!$level instanceof Level) {
+                        $sender->sendMessage($this->getMessage("land-corrupted", array($num, $info["level"], "")));
+                        return true;
+                    }
 
-				$x = (int) ($info["startX"] + (($info["endX"] - $info["startX"]) / 2));
-				$z = (int) ($info["startZ"] + (($info["endZ"] - $info["startZ"]) / 2));
-				$cnt = 0;
-				for($y = 128;; $y--){
-					$vec = new Vector3($x, $y, $z);
-					if($level->getBlock($vec)->isSolid()){
-						$y++;
-						break;
-					}
-					if($cnt === 5){
-						break;
-					}
-					if($y <= 0){
-						++$cnt;
-						++$x;
-						--$z;
-						$y = 128;
-						continue;
-					}
-				}
-				if ($sender->getGamemode() == 0) {
-					$sender->getPlayer()->setAllowFlight(false);
-					$sender->setFlying(false);
-				}
-				$file = $this->getServer()->getDataPath() . "plugin_data/SpaceServerCore/Player/" . $sender->getName() . ".yml";
-				$this->user = new Config($file, Config::YAML);
-				$sun=$this->user->get($sender->getName())["Sun"];
-				if($level->getFolderName()=="sun"){
-					if($sun==false){
-						$sender->sendMessage("§a[管理AI(ECONOMYLAND)]ここへ移動することはできません。(理由:太陽 開放されていないワールドです)");
-						return true;
-					}
-				}
-				$sender->teleport(new Position($x + 0.5, $y + 0.1, $z + 0.5, $level));
-				$sender->sendMessage($this->getMessage("success-moving", array($num, "", "")));
-				return true;
-				case "give":
-				if(!$sender instanceof Player){
-					$sender->sendMessage($this->getMessage("run-cmd-in-game"));
-					return true;
-				}
-				if(!$sender->hasPermission("economyland.command.land.give")){
-					$sender->sendMessage($this->getMessage("no-permission-command"));
-					return true;
-				}
-				if(!isset($param[1])or!isset($param[2])){
-					$sender->sendMessage("Usage: /$cmd give <player> <land number>");
-					return true;
-				}
-				$landnum = $param[2];
-				$player = $param[1];
-				if(trim($player) == "" or trim($landnum) == "" or !is_numeric($landnum)){
-					$sender->sendMessage("Usage: /$cmd give <player> <land number>");
-					return true;
-				}
-				$username = $player;
-				$player = $this->getServer()->getPlayer($username);
-				if(!$player instanceof Player){
-					$sender->sendMessage($this->getMessage("player-not-connected", [$username, "%2", "%3"]));
-					return true;
-				}
+                    $x = (int)($info["startX"] + (($info["endX"] - $info["startX"]) / 2));
+                    $z = (int)($info["startZ"] + (($info["endZ"] - $info["startZ"]) / 2));
+                    $cnt = 0;
+                    for ($y = 128; ; $y--) {
+                        $vec = new Vector3($x, $y, $z);
+                        if ($level->getBlock($vec)->isSolid()) {
+                            $y++;
+                            break;
+                        }
+                        if ($cnt === 5) {
+                            break;
+                        }
+                        if ($y <= 0) {
+                            ++$cnt;
+                            ++$x;
+                            --$z;
+                            $y = 128;
+                            continue;
+                        }
+                    }
+                    if ($sender->getGamemode() == 0) {
+                        $sender->getPlayer()->setAllowFlight(false);
+                        $sender->setFlying(false);
+                    }
+                    $file = $this->getServer()->getDataPath() . "plugin_data/SpaceServerCore/Player/" . $sender->getName() . ".yml";
+                    $this->user = new Config($file, Config::YAML);
+                    $sun = $this->user->get($sender->getName())["Sun"];
+                    if ($level->getFolderName() == "sun") {
+                        if ($sun == false) {
+                            $sender->sendMessage("§a[管理AI(ECONOMYLAND)]ここへ移動することはできません。(理由:太陽 開放されていないワールドです)");
+                            return true;
+                        }
+                    }
+                    $sender->teleport(new Position($x + 0.5, $y + 0.1, $z + 0.5, $level));
+                    $sender->sendMessage($this->getMessage("success-moving", array($num, "", "")));
+                    return true;
+                case "give":
+                    if (!$sender instanceof Player) {
+                        $sender->sendMessage($this->getMessage("run-cmd-in-game"));
+                        return true;
+                    }
+                    if (!$sender->hasPermission("economyland.command.land.give")) {
+                        $sender->sendMessage($this->getMessage("no-permission-command"));
+                        return true;
+                    }
+                    if (!isset($param[1]) or !isset($param[2])) {
+                        $sender->sendMessage("Usage: /$cmd give <player> <land number>");
+                        return true;
+                    }
+                    $landnum = $param[2];
+                    $player = $param[1];
+                    if (trim($player) == "" or trim($landnum) == "" or !is_numeric($landnum)) {
+                        $sender->sendMessage("Usage: /$cmd give <player> <land number>");
+                        return true;
+                    }
+                    $username = $player;
+                    $player = $this->getServer()->getPlayer($username);
+                    if (!$player instanceof Player) {
+                        $sender->sendMessage($this->getMessage("player-not-connected", [$username, "%2", "%3"]));
+                        return true;
+                    }
 
-				$info = $this->db->getLandById($landnum);
-				if($info === false){
-					$sender->sendMessage($this->getMessage("no-land-found", array($landnum, "%2", "%3")));
-					return true;
-				}
-				if($sender->getName() !== $info["owner"] and !$sender->hasPermission("economyland.land.give.others")){
-					$sender->sendMessage($this->getMessage("not-your-land", array($landnum, "%2", "%3")));
-				}else{
-					if($sender->getName() === $player->getName()){
-						$sender->sendMessage($this->getMessage("cannot-give-land-myself"));
-					}else{
-						if(is_numeric($this->getConfig()->get("player-land-limit", "NaN"))){
-							$cnt = count($this->db->getLandsByOwner($player->getName()));
-							if($cnt >= $this->getConfig()->get("player-land-limit", "NaN")){
-								$sender->sendMessage($this->getMessage("give-land-limit", array($player->getName(), $cnt, $this->getConfig()->get("player-land-limit", "NaN"), "%4")));
-								return true;
-							}
-						}
+                    $info = $this->db->getLandById($landnum);
+                    if ($info === false) {
+                        $sender->sendMessage($this->getMessage("no-land-found", array($landnum, "%2", "%3")));
+                        return true;
+                    }
+                    if ($sender->getName() !== $info["owner"] and !$sender->hasPermission("economyland.land.give.others")) {
+                        $sender->sendMessage($this->getMessage("not-your-land", array($landnum, "%2", "%3")));
+                    } else {
+                        if ($sender->getName() === $player->getName()) {
+                            $sender->sendMessage($this->getMessage("cannot-give-land-myself"));
+                        } else {
+                            if (is_numeric($this->getConfig()->get("player-land-limit", "NaN"))) {
+                                $cnt = count($this->db->getLandsByOwner($player->getName()));
+                                if ($cnt >= $this->getConfig()->get("player-land-limit", "NaN")) {
+                                    $sender->sendMessage($this->getMessage("give-land-limit", array($player->getName(), $cnt, $this->getConfig()->get("player-land-limit", "NaN"), "%4")));
+                                    return true;
+                                }
+                            }
 
-						$this->db->setOwnerById($info["ID"], $player->getName());
-						$sender->sendMessage($this->getMessage("gave-land", array($landnum, $player->getName(), "%3")));
-						$player->sendMessage($this->getMessage("got-land", array($sender->getName(), $landnum, "%3")));
-					}
-				}
-				return true;
-				case "invite":
-					
-					if(!$sender->hasPermission("economyland.command.land.invite")){
-						$sender->sendMessage($this->getMessage("no-permission-command"));
-						return true;
-					}
-					if(!isset($param[1])or!isset($param[2])){
-						$sender->sendMessage("Usage : /land <invite> <land number> <[r:]player>");
-						return true;
-					}
-					$landnum = $param[1];
-					$player = str_replace(" ","_",$param[2]);
-					
-					if(trim($player) == "" or trim($landnum) == ""){
-						$sender->sendMessage("Usage : /land <invite> <land number> <[r:]player>");
-						return true;
-					}
-					if(!is_numeric($landnum)){
-						$sender->sendMessage($this->getMessage("land-num-must-numeric", array($landnum, "%2", "%3")));
-						return true;
-					}
-					$info = $this->db->getLandById($landnum);
-					if($info === false){
-						$sender->sendMessage($this->getMessage("no-land-found", array($landnum, "%2", "%3")));
-						return true;
-					}elseif($info["owner"] !== $sender->getName()){
-						$sender->sendMessage($this->getMessage("not-your-land", array($landnum, "%2", "%3")));
-						return true;
-					}else{
-						if(preg_match('#^[a-zA-Z0-9_]{3,16}$#', $player) == 0){
-							$sender->sendMessage($this->getMessage("invalid-invitee", [$player, "%2", "%3"]));
-							return true;
-						}
-						$result = $this->db->addInviteeById($landnum, $player);
-						if($result === false){
-							$sender->sendMessage($this->getMessage("already-invitee", array($player, "%2", "%3")));
-							return true;
-						}
-						$sender->sendMessage($this->getMessage("success-invite", array($player, $landnum, "%3")));
-					}
-					return true;
-				case "kick":
-					if(!$sender->hasPermission("economyland.command.land.invite.remove")){
-						$sender->sendMessage($this->getMessage("no-permission-command"));
-						return true;
-					}
-					if(!isset($param[1])or!isset($param[2])){
-						$sender->sendMessage("Usage: /land kick <land number> <player>");
-						return true;
-					}
-					$landnum = $param[1];
-					$player = str_replace(" ","_",$param[2]);
-					
-					if(trim($player) === ""){
-						$sender->sendMessage("Usage: /land kick <land number> <player>");
-						return true;
-					}
-					if(!is_numeric($landnum)){
-						$sender->sendMessage($this->getMessage("land-num-must-numeric", array($landnum, "%2", "%3")));
-						return true;
-					}
+                            $this->db->setOwnerById($info["ID"], $player->getName());
+                            $sender->sendMessage($this->getMessage("gave-land", array($landnum, $player->getName(), "%3")));
+                            $player->sendMessage($this->getMessage("got-land", array($sender->getName(), $landnum, "%3")));
+                        }
+                    }
+                    return true;
+                case "invite":
 
-					$info = $this->db->getLandById($landnum);
-					if($info === false){
-						$sender->sendMessage($this->getMessage("no-land-found", array($landnum, "%2", "%3")));
-						return true;
-					}
+                    if (!$sender->hasPermission("economyland.command.land.invite")) {
+                        $sender->sendMessage($this->getMessage("no-permission-command"));
+                        return true;
+                    }
+                    if (!isset($param[1]) or !isset($param[2])) {
+                        $sender->sendMessage("Usage : /land <invite> <land number> <[r:]player>");
+                        return true;
+                    }
+                    $landnum = $param[1];
+                    $player = str_replace(" ", "_", $param[2]);
 
-					if($sender->hasPermission("economyland.command.land.invite.remove.others") and $info["owner"] !== $sender->getName()
-						or $info["owner"] === $sender->getName()){
-							$result = $this->db->removeInviteeById($landnum, $player);
-							if($result === false){
-								$sender->sendMessage($this->getMessage("not-invitee", array($player, $landnum, "%3")));
-								return true;
-							}
-							$sender->sendMessage($this->getMessage("removed-invitee", array($player, $landnum, "%3")));
-					}
-					return true;
-				case "invitee":
-					if(!isset($param[1])){
-						$sender->sendMessage("Usage: /land invitee <land number>");
-						return true;
-					}
-					$landnum = $param[1];
-					if(trim($landnum) == "" or !is_numeric($landnum)){
-						$sender->sendMessage("Usage: /land invitee <land number>");
-						return true;
-					}
+                    if (trim($player) == "" or trim($landnum) == "") {
+                        $sender->sendMessage("Usage : /land <invite> <land number> <[r:]player>");
+                        return true;
+                    }
+                    if (!is_numeric($landnum)) {
+                        $sender->sendMessage($this->getMessage("land-num-must-numeric", array($landnum, "%2", "%3")));
+                        return true;
+                    }
+                    $info = $this->db->getLandById($landnum);
+                    if ($info === false) {
+                        $sender->sendMessage($this->getMessage("no-land-found", array($landnum, "%2", "%3")));
+                        return true;
+                    } elseif ($info["owner"] !== $sender->getName()) {
+                        $sender->sendMessage($this->getMessage("not-your-land", array($landnum, "%2", "%3")));
+                        return true;
+                    } else {
+                        if (preg_match('#^[a-zA-Z0-9_]{3,16}$#', $player) == 0) {
+                            $sender->sendMessage($this->getMessage("invalid-invitee", [$player, "%2", "%3"]));
+                            return true;
+                        }
+                        $result = $this->db->addInviteeById($landnum, $player);
+                        if ($result === false) {
+                            $sender->sendMessage($this->getMessage("already-invitee", array($player, "%2", "%3")));
+                            return true;
+                        }
+                        $sender->sendMessage($this->getMessage("success-invite", array($player, $landnum, "%3")));
+                    }
+                    return true;
+                case "kick":
+                    if (!$sender->hasPermission("economyland.command.land.invite.remove")) {
+                        $sender->sendMessage($this->getMessage("no-permission-command"));
+                        return true;
+                    }
+                    if (!isset($param[1]) or !isset($param[2])) {
+                        $sender->sendMessage("Usage: /land kick <land number> <player>");
+                        return true;
+                    }
+                    $landnum = $param[1];
+                    $player = str_replace(" ", "_", $param[2]);
 
-					$info = $this->db->getInviteeById($landnum);
-					if($info === false){
-						$sender->sendMessage($this->getMessage("no-land-found", array($landnum, "%2", "%3")));
-						return true;
-					}
-					$output = "Invitee of land #$landnum : \n";
-					$output .= implode(", ", $info);
-					$sender->sendMessage($output);
-					return true;
-				case "here":
-				if(!$sender instanceof Player){
-					$sender->sendMessage($this->getMessage("run-cmd-in-game"));
-					return true;
-				}
-				$x = $sender->x;
-				$z = $sender->z;
+                    if (trim($player) === "") {
+                        $sender->sendMessage("Usage: /land kick <land number> <player>");
+                        return true;
+                    }
+                    if (!is_numeric($landnum)) {
+                        $sender->sendMessage($this->getMessage("land-num-must-numeric", array($landnum, "%2", "%3")));
+                        return true;
+                    }
 
-				$info = $this->db->getByCoord($x, $z, $sender->getLevel()->getFolderName());
-				if($info === false){
-					$sender->sendMessage($this->getMessage("no-one-owned"));
-					return true;
-				}
-				$sender->sendMessage($this->getMessage("here-land", array($info["ID"], $info["owner"], "%3")));
-				return true;
-				case "heree":
-				if(!$sender instanceof Player){
-					$sender->sendPopup($this->getMessage("run-cmd-in-game"));
-					return true;
-				}
-				$x = $sender->x;
-				$z = $sender->z;
+                    $info = $this->db->getLandById($landnum);
+                    if ($info === false) {
+                        $sender->sendMessage($this->getMessage("no-land-found", array($landnum, "%2", "%3")));
+                        return true;
+                    }
 
-				$info = $this->db->getByCoord($x, $z, $sender->getLevel()->getFolderName());
-				if($info === false){
-					$sender->sendPopup($this->getMessage("no-one-owned"));
-					return true;
-				}
-				$sender->sendPopup($this->getMessage("here-land", array($info["ID"], $info["owner"], "%3")));
-				return true;
-				default:
-				$sender->sendmessage("Usage: ".$cmd->getUsage());
-			}
-			return true;
+                    if ($sender->hasPermission("economyland.command.land.invite.remove.others") and $info["owner"] !== $sender->getName()
+                        or $info["owner"] === $sender->getName()) {
+                        $result = $this->db->removeInviteeById($landnum, $player);
+                        if ($result === false) {
+                            $sender->sendMessage($this->getMessage("not-invitee", array($player, $landnum, "%3")));
+                            return true;
+                        }
+                        $sender->sendMessage($this->getMessage("removed-invitee", array($player, $landnum, "%3")));
+                    }
+                    return true;
+                case "invitee":
+                    if (!isset($param[1])) {
+                        $sender->sendMessage("Usage: /land invitee <land number>");
+                        return true;
+                    }
+                    $landnum = $param[1];
+                    if (trim($landnum) == "" or !is_numeric($landnum)) {
+                        $sender->sendMessage("Usage: /land invitee <land number>");
+                        return true;
+                    }
+
+                    $info = $this->db->getInviteeById($landnum);
+                    if ($info === false) {
+                        $sender->sendMessage($this->getMessage("no-land-found", array($landnum, "%2", "%3")));
+                        return true;
+                    }
+                    $output = "Invitee of land #$landnum : \n";
+                    $output .= implode(", ", $info);
+                    $sender->sendMessage($output);
+                    return true;
+                case "here":
+                    if (!$sender instanceof Player) {
+                        $sender->sendMessage($this->getMessage("run-cmd-in-game"));
+                        return true;
+                    }
+                    $x = $sender->x;
+                    $z = $sender->z;
+
+                    $info = $this->db->getByCoord($x, $z, $sender->getLevel()->getFolderName());
+                    if ($info === false) {
+                        $sender->sendMessage($this->getMessage("no-one-owned"));
+                        return true;
+                    }
+                    $sender->sendMessage($this->getMessage("here-land", array($info["ID"], $info["owner"], "%3")));
+                    return true;
+                case "heree":
+                    if (!$sender instanceof Player) {
+                        $sender->sendPopup($this->getMessage("run-cmd-in-game"));
+                        return true;
+                    }
+                    $x = $sender->x;
+                    $z = $sender->z;
+
+                    $info = $this->db->getByCoord($x, $z, $sender->getLevel()->getFolderName());
+                    if ($info === false) {
+                        $sender->sendPopup($this->getMessage("no-one-owned"));
+                        return true;
+                    }
+                    $sender->sendPopup($this->getMessage("here-land", array($info["ID"], $info["owner"], "%3")));
+                    return true;
+                default:
+                    $sender->sendmessage("Usage: " . $cmd->getUsage());
+            }
 
 			case "landsell":
 			$id =$param[1];
