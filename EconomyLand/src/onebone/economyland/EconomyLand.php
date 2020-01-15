@@ -591,6 +591,7 @@ class EconomyLand extends PluginBase implements Listener{
                 default:
                     $sender->sendmessage("Usage: " . $cmd->getUsage());
             }
+            break;
 
 			case "landsell":
 			$id =$param[1];
