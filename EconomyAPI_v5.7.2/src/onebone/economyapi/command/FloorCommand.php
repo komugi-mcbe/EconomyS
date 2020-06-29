@@ -26,7 +26,8 @@ class FloorCommand extends Command{
 			$mymoney = $this->plugin->myMoney($sender->getName());
 			$mny=floor($mymoney);
 			$this->plugin->setMoney($sender->getName(),$mny);
-			$sender->sendMessage("§a >> §f小数点を切り捨てました §7(".$mnf."KG)");
+			$sender->sendMessage("§a >> §f小数点を切り捨てました §7(".$mny."KG)");
+			return true;
 		}
 	}
 }
