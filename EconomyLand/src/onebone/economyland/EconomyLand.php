@@ -393,19 +393,7 @@ class EconomyLand extends PluginBase implements Listener{
                             continue;
                         }
                     }
-                    if ($sender->getGamemode() == 0) {
-                        $sender->getPlayer()->setAllowFlight(false);
-                        $sender->setFlying(false);
-                    }
-                    $file = $this->getServer()->getDataPath() . "plugin_data/SpaceServerCore/Player/" . $sender->getName() . ".yml";
-                    $this->user = new Config($file, Config::YAML);
-                    $sun = $this->user->get($sender->getName())["Sun"];
-                    if ($level->getFolderName() == "sun") {
-                        if ($sun == false) {
-                            $sender->sendMessage("§a[管理AI(ECONOMYLAND)]ここへ移動することはできません。(理由:太陽 開放されていないワールドです)");
-                            return true;
-                        }
-                    }
+					
                     $sender->teleport(new Position($x + 0.5, $y + 0.1, $z + 0.5, $level));
                     $sender->sendMessage($this->getMessage("success-moving", array($num, "", "")));
                     return true;
