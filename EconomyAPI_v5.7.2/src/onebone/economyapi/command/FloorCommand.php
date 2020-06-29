@@ -20,12 +20,13 @@ class FloorCommand extends Command{
 
 		$this->plugin = $plugin;
 	}
+	
 	public function execute(CommandSender $sender, string $label, array $params): bool{
 		if ($sender instanceof Player) {
 			$mymoney = $this->plugin->myMoney($sender->getName());
 			$mny=floor($mymoney);
 			$this->plugin->setMoney($sender->getName(),$mny);
-			$sender->sendMessage("切り捨てました");
+			$sender->sendMessage("§a >> §f小数点を切り捨てました §7(".$mnf."KG)");
 		}
 	}
 }
