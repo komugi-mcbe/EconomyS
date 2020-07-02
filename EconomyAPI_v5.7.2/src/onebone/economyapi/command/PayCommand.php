@@ -55,7 +55,6 @@ class PayCommand extends Command{
 			$sender->sendMessage($this->plugin->getMessage("player-never-connected", [$player], $sender->getName()));
 			return true;
 		}
-		if($this->plugin->pa[$sender->getName()]==1){
 			$this->plugin->getServer()->getPluginManager()->callEvent($ev = new PayMoneyEvent($this->plugin, $sender->getName(), $player, $amount));
 
 			$result = EconomyAPI::RET_CANCELLED;
@@ -80,10 +79,5 @@ class PayCommand extends Command{
 			}
 			$this->plugin->pa[$sender->getName()]=0;
 			return true;
-		}else{
-			$sender->sendMessage("[EconomyS] §b".$player."§aに§e{$amount}§a円払おうとしてます。大丈夫ならコマンドをもう一度実行してください");
-			$this->plugin->pa[$sender->getName()]=1;
-		}
-		return true;
 	}
 }
